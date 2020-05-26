@@ -3,9 +3,14 @@ import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 import { getUserIdFromJwt } from '../../auth/utils'
 import { createLogger } from '../../utils/logger'
-const logger = createLogger('http')
 import { DynamoDB } from 'aws-sdk';
+// import * as AWSSDK from 'aws-sdk';
+// import * as XRAY from 'aws-xray-sdk';
+// const AWS = XRAY.captureAWS(AWSSDK)
+// const docClient = new AWS.DynamoDB()
 const docClient = new DynamoDB.DocumentClient();
+
+const logger = createLogger('http')
 
 const TODO_TABLE = process.env.TODO_TABLE
 const INDEX_NAME = process.env.INDEX_NAME

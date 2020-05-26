@@ -1,6 +1,8 @@
 import 'source-map-support/register'
-import * as AWS from 'aws-sdk';
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
+import * as AWSSDK from 'aws-sdk';
+import * as XRAY from 'aws-xray-sdk';
+const AWS = XRAY.captureAWS(AWSSDK)
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const todoId = event.pathParameters.todoId

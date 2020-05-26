@@ -3,13 +3,13 @@ import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } f
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 import { v4 as uuid } from 'uuid';
 import { createLogger } from '../../utils/logger'
-const logger = createLogger('http')
 import { DynamoDB } from 'aws-sdk';
 import { getUserIdFromJwt } from '../../auth/utils';
 import { TodoItem } from '../../models/TodoItem';
+
+const logger = createLogger('http')
 const docClient = new DynamoDB.DocumentClient();
 const TODO_TABLE = process.env.TODO_TABLE
-
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 
   try {

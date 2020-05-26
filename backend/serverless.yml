@@ -4,6 +4,9 @@ service:
 plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
+  - serverless-reqvalidator-plugin
+  - serverless-plugin-tracing
+
 
 package:
   individually: true
@@ -14,6 +17,18 @@ provider:
 
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'eu-west-1'}
+
+  tracing:
+    lambda: true
+    apiGateway: true
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
+      Resource:
+        - "*"
 
   environment:
     REGION: eu-west-1;
@@ -33,6 +48,7 @@ functions:
           method: get
           path: todos
           cors: true
+          reqValidatorName: RequestValidator
     iamRoleStatements:
       - Effect: Allow
         Action: dynamodb:Scan
@@ -45,6 +61,7 @@ functions:
           method: post
           path: todos
           cors: true
+          reqValidatorName: RequestValidator
     iamRoleStatements:
       - Effect: Allow
         Action: dynamodb:PutItem
@@ -57,6 +74,7 @@ functions:
           method: put
           path: todos/{todoId}
           cors: true
+          reqValidatorName: RequestValidator
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -71,6 +89,7 @@ functions:
           method: delete
           path: todos/{todoId}
           cors: true
+          reqValidatorName: RequestValidator
     iamRoleStatements:
       - Effect: Allow
         Action: dynamodb:DeleteItem
@@ -83,9 +102,19 @@ functions:
           method: post
           path: todos/{todoId}/attachment
           cors: true
+          reqValidatorName: RequestValidator
 
 resources:
   Resources:
+    RequestValidator:
+      Type: "AWS::ApiGateway::RequestValidator"
+      Properties:
+        Name: "req-validator"
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        ValidateRequestBody: true
+        ValidateRequestParameters: false
+
     TodoDynamoDBTable:
       Type: AWS::DynamoDB::Table
       Properties:
