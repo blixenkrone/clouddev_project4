@@ -10,7 +10,7 @@ import { JwtPayload } from '../../auth/JwtPayload'
 
 const logger = createLogger('auth')
 
-const jwksUrl = 'https://dev-h22b0uti.eu.auth0.com/.well-known/jwks.json'
+const jwksUrl = 'https://dev-cloud-project4.eu.auth0.com/.well-known/jwks.json';
 
 export const handler = async (
   event: CustomAuthorizerEvent
@@ -62,27 +62,16 @@ const certToPEM = (cert: string): Secret => {
   return cert;
 }
 
-/**
- * Asymetric JWT verifier based on steps from https://auth0.com/blog/navigating-rs256-and-jwks/
- * @param authHeader
- */
 async function verifyToken(authHeader: string): Promise<JwtPayload> {
   try {
-    // Retrieve the JWKS and filter for potential signing keys
     const jwks: Jwks = await Axios.get(jwksUrl);
-    // Extract the JWT from the request's authorization header.
     const token = getToken(authHeader)
     const jwt: Jwt = decode(token, { complete: true }) as Jwt
-    // Decode the JWT and grab the kid property from the header.
     const authHdrKid = jwt.header.kid;
-    // Find a signing key in the filtered JWKS with a matching kid property
     const signingKey: Key = jwks.keys.filter(key => key.kid == authHdrKid)[0]
-    // Using the x5c property build a certificate which will be used to verify the JWT signature.
     const pem = certToPEM(signingKey.x5c[0])
-    // Ensure the JWT contains the expected audience, issuer, expiration, etc.
     verify(token, pem);
-    // This is async function, so return the result as a promise that resolves to the payload
-    return Promise.resolve(jwt.payload);
+    return jwt.payload;
   }
   catch (e) {
     logger.error(e)
