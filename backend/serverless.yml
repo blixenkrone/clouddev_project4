@@ -7,7 +7,6 @@ plugins:
   - serverless-reqvalidator-plugin
   - serverless-plugin-tracing
 
-
 package:
   individually: true
 
@@ -37,6 +36,18 @@ provider:
     FILE_UPLOAD_S3_BUCKET: clouddev-project4-todo-bucket-${self:provider.stage}
     INDEX_NAME: user-index
 
+custom:
+  documentation:
+    api:
+      info:
+        version: v1.0.0
+        title: udacity-project4
+        description: Serverless application
+    models:
+      - name: GroupRequest
+        contentType: application/json
+        schema: ${file(src/models/create-group-request.json)}
+
 functions:
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
@@ -49,6 +60,10 @@ functions:
           path: todos
           cors: true
           reqValidatorName: RequestValidator
+          documentation:
+              summary: Get all todos
+              requestModels:
+                'application/json': GroupRequest
     iamRoleStatements:
       - Effect: Allow
         Action: dynamodb:Scan
@@ -62,6 +77,10 @@ functions:
           path: todos
           cors: true
           reqValidatorName: RequestValidator
+          documentation:
+              summary: Create new todo
+              requestModels:
+                'application/json': GroupRequest
     iamRoleStatements:
       - Effect: Allow
         Action: dynamodb:PutItem
@@ -75,6 +94,10 @@ functions:
           path: todos/{todoId}
           cors: true
           reqValidatorName: RequestValidator
+          documentation:
+              summary: Update a todo
+              requestModels:
+                'application/json': GroupRequest
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -90,6 +113,10 @@ functions:
           path: todos/{todoId}
           cors: true
           reqValidatorName: RequestValidator
+          documentation:
+              summary: Delete a todo
+              requestModels:
+                'application/json': GroupRequest
     iamRoleStatements:
       - Effect: Allow
         Action: dynamodb:DeleteItem
@@ -103,6 +130,10 @@ functions:
           path: todos/{todoId}/attachment
           cors: true
           reqValidatorName: RequestValidator
+          documentation:
+              summary: Generate upload url
+              requestModels:
+                'application/json': GroupRequest
 
 resources:
   Resources:
