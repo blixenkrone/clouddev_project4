@@ -19,7 +19,7 @@
     "@types/jsonwebtoken": "^8.3.5",
     "@types/node": "^10.17.12",
     "@types/uuid": "^3.4.6",
-    "aws-sdk": "^2.596.0",
+    "aws-sdk": "^2.814.0",
     "serverless-aws-documentation": "^1.1.0",
     "serverless-iam-roles-per-function": "^1.0.4",
     "serverless-plugin-canary-deployments": "^0.4.8",
